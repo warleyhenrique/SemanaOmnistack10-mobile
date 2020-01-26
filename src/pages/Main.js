@@ -3,7 +3,10 @@ import {StyleSheet, Image, View, Text, TextInput, TouchableOpacity }  from 'reac
 import MapView, {Marker, Callout} from 'react-native-maps';
 import { requestPermissionsAsync, getCurrentPositionAsync} from 'expo-location'
 import { MaterialIcons } from '@expo/vector-icons';
+
 import api from '../services/api';
+import socket, { connect } from  '../services/socket';
+//import { setupWebSocket } from '../../../backend/src/websocket';
 
 
 function Main({navigation}){
@@ -34,6 +37,15 @@ function Main({navigation}){
         loadInitialPosition();
     },[]);
 
+    function setupWebSocket(){
+        const {latitude, longitude } = currentRegion;
+        connect(
+            latitude,
+            longitude,
+            techs,
+        );
+    }
+
     async function loadDevs(){
         const {latitude, longitude} = currentRegion;
 
@@ -46,6 +58,8 @@ function Main({navigation}){
         });
 
         setDevs(response.data.devs);
+        setupWebSocket();
+
     }
 
     function handleRegionChanged(region){
